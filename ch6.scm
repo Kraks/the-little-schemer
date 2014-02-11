@@ -12,7 +12,7 @@
           ((eq? (car (cdr aexp)) '^)
            (and (numbered? (car aexp)) (numbered? (car (cdr (cdr aexp)))))))))
 
-;; Simplified
+;; Simplified numbered?
 (define numbered?
   (lambda (aexp)
     (cond ((atom? aexp) (number? aexp))
@@ -24,6 +24,7 @@
     (cond ((zero? m) 1)
           (else (* n (^ n (- m 1)))))))
 
+;; evaluate for infix expression
 (define value
   (lambda (nexp)
     (cond ((atom? nexp) nexp)
@@ -45,6 +46,7 @@
   (lambda (aexp)
     (car aexp)))
 
+;; evaluate for prefix expression
 (define value
   (lambda (nexp)
     (cond ((atom? nexp) nexp)

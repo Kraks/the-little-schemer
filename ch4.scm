@@ -27,11 +27,13 @@
       ((zero? m) n)
       (else (sub1 (o- n (sub1 m)))))))
 
-;; alias sum
+;; sum all the number in the tup(list)
 (define addtup
   (lambda (tup)
     (cond ((null? tup) 0)
           (else (o+ (car tup) (addtup (cdr tup)))))))
+
+;; expand as follows
 (addtup '(1 2 3))
 (o+ 1 (addtup '(2 3)))
 (o+ 1 (o+ 2 (addtup '(3))))
@@ -58,7 +60,7 @@
           (else (cons (+ (car tup1) (car tup2)) 
                       (tup+ (cdr tup1) (cdr tup2)))))))
 
-(tup+ '(3 7) '(4 6))
+(tup+ '(3 7) '(4 6)) ;; (7 13)
 
 (define o>
   (lambda (n m)

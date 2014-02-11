@@ -1,3 +1,4 @@
+;; remove member
 (define rember
   (lambda (a lat)
     (cond ((null? lat) (quote ()))
@@ -12,6 +13,7 @@
 
 (first '((a b) (c d) (e f)))
 
+;; insert element at right of old
 (define insertR
   (lambda (new old lat)
     (cond ((null? lat) (quote ()))
@@ -32,22 +34,22 @@
           (else (cons (car lat) (insertL new old (cdr lat)))))))
 (insertL 'z 'b '(a b c d))
 
-(define subset
+(define subst
   (lambda (new old lat)
     (cond ((null? lat) (quote ()))
           ((eq? (car lat) old) (cons new (cdr lat)))
-          (else (cons (car lat) (subset new old (cdr lat)))))))
-(subset 'z 'b '(a b c d))
+          (else (cons (car lat) (subst new old (cdr lat)))))))
+(subst 'z 'b '(a b c d))
 
-(define subset2
+(define subst2
   (lambda (new o1 o2 lat)
     (cond ((null? lat) (quote ()))
           ((or (eq? (car lat) o1)
                (eq? (car lat) o2))
            (cons new (cdr lat)))
-          (else (cons (car lat) (subset2 new o1 o2 (cdr lat)))))))
-(subset2 'z 'c 'b '(a b c d))
-(subset2 'z 'c 'b '(a c b d))
+          (else (cons (car lat) (subst2 new o1 o2 (cdr lat)))))))
+(subst2 'z 'c 'b '(a b c d))
+(subst2 'z 'c 'b '(a c b d))
 
 (define multirember
   (lambda (a lat)
