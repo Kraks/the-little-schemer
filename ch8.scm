@@ -166,7 +166,7 @@
 
 (multiremberT (lambda (x) (eq? x 'a)) '(b c d a x a))
 
-;; It looks at every atom of the lat to see whether it is
+;; multirember&co looks at every atom of the lat to see whether it is
 ;; eq? to a. Those atoms that are not are collected in one
 ;; list ls1; the others for which the answer is true are collected
 ;; in a second list ls2. Finally, it determines the value os
@@ -219,3 +219,46 @@
 ;; display y
 (multirember&co 'a '(a b c d a b a) (lambda (x y)
                                       (display (cons "y:" y))))
+
+(define multiinsertL
+  (lambda (new old lat)
+    (cond ((null? lat) '())
+          ((eq? old (car lat))
+           (cons new (cons old (multiinsertL new old (cdr lat)))))
+          (else (cons (car lat) (multiinsertL new old (car lat)))))))
+
+(define multiinsertR
+  (lambda (new old lat)
+    (cond ((null? lat) '())
+          ((eq? old (car lat))
+           (cons old (cons new (multiinsertR new old (cdr lat)))))
+          (else (cons (car lat) (multiinsertR new old (cdr lat)))))))
+
+(define multiinsertLR
+  (lambda (new oldL oldR lat)
+    (cond ((null? lat) '())
+          ((eq? (car lat) oldL)
+           (cons new (cons oldL (multiinsertLR new oldL oldR (cdr lat)))))
+          ((eq? (car lat) oldR)
+           (cons oldR (cons new (multiinsertLR new oldL oldR (cdr lat)))))
+          (else (cons (car lat) (multiinsertLR new oldL oldR (cdr lat)))))))
+
+(define add1
+  (lambda (x) (+ x 1)))
+
+(define multiinsertLR&co
+  (lambda (new oldL oldR lat col)
+    (cond ((null? lat)
+           (col '() 0 0))
+          ((eq? (car lat) oldL)
+           (multiinsertLR&co new oldL oldR (cdr lat)
+                             (lambda (newlat L R) (col (cons new (cons oldL newlat)) (add1 L) R))))
+          ((eq? (car lat) oldR)
+           (multiinsertLR&co new oldL oldR (cdr lat)
+                             (lambda (newlat L R) (col (cons oldR (cons new newlat)) L (add1 R)))))
+          (else 
+           (multiinsertLR&co new oldL oldR (cdr lat)
+                             (lambda (newlat L R) (col (cons (car lat) newlat) L R)))))))
+
+(multiinsertLR&co 'salty 'fish 'chips '(chips and fish or fish and chips) 
+                  (lambda (newlat Lcount Rcount) newlat))
