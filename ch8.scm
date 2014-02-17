@@ -262,3 +262,63 @@
 
 (multiinsertLR&co 'salty 'fish 'chips '(chips and fish or fish and chips) 
                   (lambda (newlat Lcount Rcount) newlat))
+
+(define sub1
+  (lambda (n)
+    (- n 1)))
+
+(define o+
+  (lambda (n m)
+    (cond ((zero? m) n)
+          (else (add1 (o+ n (sub1 m)))))))
+
+(define o-
+  (lambda (n m)
+    (cond ((zero? m) n)
+          (else (sub1 (o- n (sub1 m)))))))
+
+(define o*
+  (lambda (n m)
+    (cond ((zero? m) 0)
+          (else (o+ n (o* n (sub1 m)))))))
+
+(define o/
+  (lambda (n m)
+    (cond ((< n m) 0)
+          (else (add1 (o/ (o- n m) m))))))
+
+(define my-even?
+  (lambda (n)
+    (= (o* (o/ n 2) 2) n)))
+
+(define evens-only*
+  (lambda (l)
+    (cond ((null? l) '())
+          ((atom? (car l))
+                  (cond ((even? (car l))
+                         (cons (car l) (evens-only* (cdr l))))
+                        (else (evens-only* (cdr l)))))
+          (else (cons (evens-only* (car l)) (evens-only* (cdr l)))))))
+
+(define evens-only*&co
+  (lambda (l col)
+    (cond ((null? l)
+           (col '() 1 0))
+          ((atom? (car l))
+           (cond ((even? (car l))
+                  (evens-only*&co (cdr l)
+                                  (lambda (newl p s)
+                                    (col (cons (car l) newl) (* (car l) p) s))))
+                 (else (evens-only*&co (cdr l)
+                                       (lambda (newl p s)
+                                         (col newl p (+ (car l) s)))))))
+          (else (evens-only*&co (car l)
+                                (lambda (al ap as) 
+                                  (evens-only*&co (cdr l)
+                                                  (lambda (dl dp ds)
+                                                    (col (cons al dl)
+                                                         (* ap dp)
+                                                         (+ as ds))))))))))
+
+(evens-only*&co '((9 1 2 8) 3 10 ((9 9) 7 6) 2) (lambda (newl product sum)
+                                                  (cons sum (cons product newl))))
