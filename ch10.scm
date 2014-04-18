@@ -229,4 +229,4 @@
               (new-entry (formals-of closure) vals)
               (table-of closure)))))
 
-(define myeval value)
+(define eval2 value)
